@@ -44,6 +44,8 @@ public:
     // after click 
     void setYellow();
     void removeYellow();
+    // possible moves called after click
+    void Tile::possible();
 private:
     Type type;
     Color color;

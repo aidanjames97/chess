@@ -112,3 +112,21 @@ void Tile::removeYellow() {
     }
     setStyleSheet("background-color: grey");
 }
+
+// possible moves for piece to make
+void Tile::possible() {
+    switch(type) {
+        case Type::pawn:
+            break;
+        case Type::bishop:
+            break;
+        case Type::knight:
+            break;
+        case Type::rook:
+            break;
+        case Type::queen:
+            break;
+        case Type::king:
+            break;
+    }
+}
