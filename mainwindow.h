@@ -14,6 +14,7 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
     QGridLayout *board;
+    Tile *boardArr[8][8];
 private:
     Tile *exClicked; // last clicked tile by player
 private slots:
