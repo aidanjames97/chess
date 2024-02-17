@@ -34,6 +34,7 @@ public:
     void setGreen(); // set background to green
     void setLoc(pair<int,int> l); // set coords
     void setType(Type t); // set type if piece
+    pair<int, int> getLoc(); // get coords
     // setting icons
     void setPawn();
     void setRook();
@@ -41,11 +42,12 @@ public:
     void setBishop();
     void setQueen();
     void setKing();
+    void setBlue();
     // after click 
     void setYellow();
     void removeYellow();
     // possible moves called after click
-    void Tile::possible();
+    // void Tile::possible();
 private:
     Type type;
     Color color;

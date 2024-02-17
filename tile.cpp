@@ -88,8 +88,14 @@ void Tile::setLoc(pair<int, int> l) {
     loc.second = l.second;
 }
 
+// getter for location
+pair<int, int> Tile::getLoc() {
+    return make_pair(loc.first, loc.second);
+}
+
 // handles mouse clicks
 void Tile::mousePressEvent(QMouseEvent *e) {
+    cout << "mouse pressed" << endl;
     if(e->button() == Qt::LeftButton) {
         emit leftClick();
         setYellow();
@@ -104,6 +110,11 @@ void Tile::setYellow() {
 
 }
 
+// set background to blue to indicate possible move
+void Tile::setBlue() {
+    setStyleSheet("background-color: blue");
+}
+
 // remove yellow background (new click)
 void Tile::removeYellow() {
     if(color == Color::green) {
@@ -114,19 +125,20 @@ void Tile::removeYellow() {
 }
 
 // possible moves for piece to make
-void Tile::possible() {
-    switch(type) {
-        case Type::pawn:
-            break;
-        case Type::bishop:
-            break;
-        case Type::knight:
-            break;
-        case Type::rook:
-            break;
-        case Type::queen:
-            break;
-        case Type::king:
-            break;
-    }
-}
+// void Tile::possible() {
+//     switch(type) {
+//         case Type::pawn:
+//             break;
+//         case Type::bishop:
+//             break;
+//         case Type::knight:
+//             break;
+//         case Type::rook:
+//             break;
+//         case Type::queen:
+//             break;
+//         case Type::king:
+//             break;
+//     }
+//     return;
+// }

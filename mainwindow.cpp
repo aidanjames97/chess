@@ -18,6 +18,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
             tile->setGeometry(QRect(QPoint(i*TILE_SIZE, j*TILE_SIZE), QSize(TILE_SIZE, TILE_SIZE)));
             tile->setIconSize(QSize(TILE_SIZE - 10, TILE_SIZE - 10));
             tile->setLoc(make_pair(i,j));
+            boardArr[i][j] = tile; // adding tile to board array
             // set background color
             if((j%2 == 1) ^ (i%2 == 1)) {
                 // odd
@@ -81,6 +82,7 @@ void MainWindow::handleTile(Tile *tile) {
     if(exClicked != nullptr) {
         exClicked->removeYellow();
     }
+    boardArr[(tile->getLoc().first) - 1][tile->getLoc().second]->setBlue();
     exClicked = tile;
     return;
 }
