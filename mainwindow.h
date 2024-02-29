@@ -16,7 +16,9 @@ public:
     QGridLayout *board;
     Tile *boardArr[8][8];
 private:
-    Tile *exClicked; // last clicked tile by player
+    vector<Tile*> movePossible; // holds moves the player is allowed to make
+    vector<Tile*> resetAfter; // holds tiles whos colors need to be reset
+    Tile *exClicked; // to hold tile player clicked before for icon movement
 private slots:
     void handleTile(Tile *tile);
 };

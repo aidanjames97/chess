@@ -35,6 +35,8 @@ public:
     void setLoc(pair<int,int> l); // set coords
     void setType(Type t); // set type if piece
     pair<int, int> getLoc(); // get coords
+    Type getType(); // get the type of piece is in square
+    Team getTeam(); // get the team (w / b) of the piece
     // setting icons
     void setPawn();
     void setRook();
@@ -45,7 +47,7 @@ public:
     void setBlue();
     // after click 
     void setYellow();
-    void removeYellow();
+    void removeColor();
     // possible moves called after click
     // void Tile::possible();
 private:
