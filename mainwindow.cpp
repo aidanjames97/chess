@@ -9,8 +9,7 @@
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     board = new QGridLayout(this);
     board->setGeometry(QRect(QPoint(0,0), QSize(WH*TILE_SIZE, WH*TILE_SIZE)));
-
-    exClicked = nullptr; // default ex click to null
+    exClicked = nullptr;
 
     for(int i=0; i<8;i++) {
         for(int j=0; j<8;j++) {
@@ -79,12 +78,91 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
 
 // handles mouse click on tiles
 void MainWindow::handleTile(Tile *tile) {
-    if(exClicked != nullptr) {
-        exClicked->removeYellow();
+    // remove any coloring on tiles and reset vector
+    for(auto t : resetAfter) {
+        t->removeColor();
     }
-    boardArr[(tile->getLoc().first) - 1][tile->getLoc().second]->setBlue();
-    exClicked = tile;
-    return;
+    resetAfter.clear();
+
+    // check in possile moves player could have made with tile clicks
+    // (this means player is going to move the that space)
+    if(exClicked == nullptr) {
+        return;
+    }
+
+    // BUG IN HERE WITH CLICKED BELIVE TO BE EX CLICKED OR THIS LOOP BELOW
+
+    // searing in moves in
+    for(auto t : movePossible) {
+        if(tile == t) {
+            // move piece to this location
+            return;
+        }
+    }
+
+    // defaut tasks handled above ----
+
+    // check for no piece on clicked tile
+    if(tile->getType() == Type::none) {
+        return;
+    }
+
+    // piece found, find possible moves and color them
+
+    int x = tile->getLoc().first; // holds curr tile x
+    int y = tile->getLoc().second; // holds curr tile y
+    resetAfter.push_back(tile); // add this tile to the reset vector
+    exClicked = tile; // set last clicked to current tile
+
+    if(tile->getTeam() == Team::white) {
+        // white peice (bot going up)
+        switch(tile->getType()) {
+            case(Type::none):
+                break;
+            case(Type::pawn):
+                if(y-1 == 0) {
+                    // hit bottom of board (promo)
+                    return;
+                }
+                if(boardArr[x][y-1]->getType() == Type::none) {
+                    // can move forward
+                    boardArr[x][y-1]->setBlue();
+                    resetAfter.push_back(boardArr[x][y-1]);
+                    movePossible.push_back(boardArr[x][y-1]);
+                    if(y==6 && boardArr[x][y-2]->getType() == Type::none) {
+                        // on starting row (can move up 2) and no one in front
+                        boardArr[x][y-2]->setBlue();
+                        resetAfter.push_back(boardArr[x][y-2]);
+                        movePossible.push_back(boardArr[x][y-2]);
+                    }
+                }
+                break;
+        }
+        return;
+    }
+
+    // black peice (top going down)
+    switch(tile->getType()) {
+        case(Type::none):
+            break;
+        case(Type::pawn):
+            if(y == 7) {
+                // hit top of board (promo)
+                return;
+            }
+            if(boardArr[x][y+1]->getType() == Type::none) {
+                // can move forward
+                boardArr[x][y+1]->setBlue();
+                resetAfter.push_back(boardArr[x][y+1]);
+                movePossible.push_back(boardArr[x][y+1]);
+                if(y==1 && boardArr[x][y+2]->getType() == Type::none) {
+                    // on starting row (can move up 2) and no one in front
+                    boardArr[x][y+2]->setBlue();
+                    resetAfter.push_back(boardArr[x][y+2]);
+                    movePossible.push_back(boardArr[x][y+2]);
+                }
+            }
+    }
 }
 
 // deconstructor

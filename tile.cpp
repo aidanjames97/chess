@@ -93,9 +93,18 @@ pair<int, int> Tile::getLoc() {
     return make_pair(loc.first, loc.second);
 }
 
+// getter for type of piece
+Type Tile::getType() {
+    return type;
+}
+
+// getter for the team piece is
+Team Tile::getTeam() {
+    return team;
+}
+
 // handles mouse clicks
 void Tile::mousePressEvent(QMouseEvent *e) {
-    cout << "mouse pressed" << endl;
     if(e->button() == Qt::LeftButton) {
         emit leftClick();
         setYellow();
@@ -116,7 +125,7 @@ void Tile::setBlue() {
 }
 
 // remove yellow background (new click)
-void Tile::removeYellow() {
+void Tile::removeColor() {
     if(color == Color::green) {
         setStyleSheet("background-color: green");
         return;
