@@ -45,6 +45,7 @@ public:
     void setQueen();
     void setKing();
     void setBlue();
+    void removePiece();
     // after click 
     void setYellow();
     void removeColor();
