@@ -78,17 +78,12 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
 
 // handles mouse click on tiles
 void MainWindow::handleTile(Tile *tile) {
+    tile->setYellow();
     // remove any coloring on tiles and reset vector
     for(auto t : resetAfter) {
         t->removeColor();
     }
     resetAfter.clear();
-
-    // check in possile moves player could have made with tile clicks
-    // (this means player is going to move the that space)
-    if(exClicked == nullptr) {
-        return;
-    }
 
     // BUG IN HERE WITH CLICKED BELIVE TO BE EX CLICKED OR THIS LOOP BELOW
 
@@ -96,9 +91,37 @@ void MainWindow::handleTile(Tile *tile) {
     for(auto t : movePossible) {
         if(tile == t) {
             // move piece to this location
+            Type tmp = exClicked->getType();
+            exClicked->removePiece();
+            tile->setTeam(exClicked->getTeam());
+            switch (tmp) {
+                case(Type::pawn):
+                    tile->setPawn();
+                    break;
+                case(Type::bishop):
+                    tile->setBishop();
+                    break;
+                case(Type::knight):
+                    tile->setKnight();
+                    break;
+                case(Type::rook):
+                    tile->setRook();
+                    break;
+                case(Type::queen):
+                    tile->setQueen();
+                    break;
+                default:
+                    tile->setKing();
+                    break;
+            }
+            tile->removeColor();
+            exClicked = tile;
+            movePossible.clear();
             return;
         }
     }
+
+    movePossible.clear(); // clearing moves which were possible for last piece clicked
 
     // defaut tasks handled above ----
 
@@ -115,27 +138,99 @@ void MainWindow::handleTile(Tile *tile) {
     exClicked = tile; // set last clicked to current tile
 
     if(tile->getTeam() == Team::white) {
+        Tile* checking = new Tile(); // tile pointer to tile we are checking
         // white peice (bot going up)
         switch(tile->getType()) {
-            case(Type::none):
-                break;
             case(Type::pawn):
-                if(y-1 == 0) {
+                if(y == 0) {
                     // hit bottom of board (promo)
                     return;
                 }
-                if(boardArr[x][y-1]->getType() == Type::none) {
+                checking = boardArr[x][y-1];
+                if(checking->getType() == Type::none) {
                     // can move forward
-                    boardArr[x][y-1]->setBlue();
-                    resetAfter.push_back(boardArr[x][y-1]);
-                    movePossible.push_back(boardArr[x][y-1]);
-                    if(y==6 && boardArr[x][y-2]->getType() == Type::none) {
+                    checking->setBlue();
+                    resetAfter.push_back(checking);
+                    movePossible.push_back(checking);
+                    checking = boardArr[x][y-2];
+                    if(y==6 && checking->getType() == Type::none) {
                         // on starting row (can move up 2) and no one in front
-                        boardArr[x][y-2]->setBlue();
-                        resetAfter.push_back(boardArr[x][y-2]);
-                        movePossible.push_back(boardArr[x][y-2]);
+                        checking->setBlue();
+                        resetAfter.push_back(checking);
+                        movePossible.push_back(checking);
                     }
                 }
+                // check for piece to the side and checking for off board
+                checking = boardArr[x+1][y-1];
+                if(x+1 <= 7) {
+                    if(checking->getType() != Type::none && checking->getTeam() != tile->getTeam()) {
+                        checking->setBlue();
+                        resetAfter.push_back(checking);
+                        movePossible.push_back(checking);
+                    }
+                }
+                checking = boardArr[x-1][y-1];
+                if(x-1 >= 0) {
+                    if(checking->getType() != Type::none && checking->getTeam() != tile->getTeam()) {
+                        checking->setBlue();
+                        resetAfter.push_back(checking);
+                        movePossible.push_back(checking);
+                    }
+                }
+                break;
+            case(Type::bishop):
+                Tile* checking = new Tile();
+                // check left up diagonal
+                while(x >= 0 && y >= 0) {
+
+                }
+                break;
+        }
+        return;
+    }
+
+    if(tile->getTeam() == Team::black) {
+        Tile* checking = new Tile(); // tile pointer to tile we are checking
+        // white peice (bot going up)
+        switch(tile->getType()) {
+            case(Type::pawn):
+                if(y == 7) {
+                    // hit bottom of board (promo)
+                    return;
+                }
+                checking = boardArr[x][y+1];
+                if(checking->getType() == Type::none) {
+                    // can move forward
+                    checking->setBlue();
+                    resetAfter.push_back(checking);
+                    movePossible.push_back(checking);
+                    checking = boardArr[x][y+2];
+                    if(y==1 && checking->getType() == Type::none) {
+                        // on starting row (can move up 2) and no one in front
+                        checking->setBlue();
+                        resetAfter.push_back(checking);
+                        movePossible.push_back(checking);
+                    }
+                }
+                // check for piece to the side and checking for off board
+                checking = boardArr[x+1][y+1];
+                if(x+1 <= 7) {
+                    if(checking->getType() != Type::none && checking->getTeam() != tile->getTeam()) {
+                        checking->setBlue();
+                        resetAfter.push_back(checking);
+                        movePossible.push_back(checking);
+                    }
+                }
+                checking = boardArr[x-1][y+1];
+                if(x-1 >= 0) {
+                    if(checking->getType() != Type::none && checking->getTeam() != tile->getTeam()) {
+                        checking->setBlue();
+                        resetAfter.push_back(checking);
+                        movePossible.push_back(checking);
+                    }
+                }
+                break;
+            case(Type::bishop):
                 break;
         }
         return;
@@ -143,8 +238,6 @@ void MainWindow::handleTile(Tile *tile) {
 
     // black peice (top going down)
     switch(tile->getType()) {
-        case(Type::none):
-            break;
         case(Type::pawn):
             if(y == 7) {
                 // hit top of board (promo)

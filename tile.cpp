@@ -107,7 +107,6 @@ Team Tile::getTeam() {
 void Tile::mousePressEvent(QMouseEvent *e) {
     if(e->button() == Qt::LeftButton) {
         emit leftClick();
-        setYellow();
     }
 }
 
@@ -122,6 +121,12 @@ void Tile::setYellow() {
 // set background to blue to indicate possible move
 void Tile::setBlue() {
     setStyleSheet("background-color: blue");
+}
+
+// remove icon from the tile
+void Tile::removePiece() {
+    setIcon(QIcon());
+    type = Type::none;
 }
 
 // remove yellow background (new click)
