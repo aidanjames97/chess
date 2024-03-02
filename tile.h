@@ -23,7 +23,8 @@ enum class Color {
 
 enum class Team {
     white,
-    black
+    black,
+    none
 };
 
 class Tile : public QPushButton {

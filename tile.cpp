@@ -115,7 +115,6 @@ void Tile::setYellow() {
     if(type != Type::none) {
         setStyleSheet("background-color: yellow");
     }
-
 }
 
 // set background to blue to indicate possible move
@@ -127,6 +126,7 @@ void Tile::setBlue() {
 void Tile::removePiece() {
     setIcon(QIcon());
     type = Type::none;
+    team = Team::none;
 }
 
 // remove yellow background (new click)

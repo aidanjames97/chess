@@ -18,7 +18,8 @@ public:
 private:
     vector<Tile*> movePossible; // holds moves the player is allowed to make
     vector<Tile*> resetAfter; // holds tiles whos colors need to be reset
-    Tile *exClicked; // to hold tile player clicked before for icon movement
+    Tile* exClicked; // to hold tile player clicked before for icon movement
+    bool moved = false;
 private slots:
     void handleTile(Tile *tile);
 };
