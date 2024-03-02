@@ -68,6 +68,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
                     // white rook
                     tile->setRook();
                 }
+            } else {
+                tile->setTeam(Team::none);
             }
 
             board->addWidget(tile, i, j);
@@ -78,22 +80,24 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
 
 // handles mouse click on tiles
 void MainWindow::handleTile(Tile *tile) {
-    tile->setYellow();
-    // remove any coloring on tiles and reset vector
+    // handles when user clicks same piece when it is already selected
+    if(tile == exClicked && !moved) {
+        return;
+    }
+    tile->setYellow(); // set background yellow (indicate click)
+    // remove any coloring on tiles
     for(auto t : resetAfter) {
         t->removeColor();
     }
-    resetAfter.clear();
-
-    // BUG IN HERE WITH CLICKED BELIVE TO BE EX CLICKED OR THIS LOOP BELOW
+    resetAfter.clear(); // clear array
 
     // searing in moves in
     for(auto t : movePossible) {
         if(tile == t) {
             // move piece to this location
             Type tmp = exClicked->getType();
-            exClicked->removePiece();
             tile->setTeam(exClicked->getTeam());
+            exClicked->removePiece();
             switch (tmp) {
                 case(Type::pawn):
                     tile->setPawn();
@@ -114,36 +118,38 @@ void MainWindow::handleTile(Tile *tile) {
                     tile->setKing();
                     break;
             }
-            tile->removeColor();
-            exClicked = tile;
-            movePossible.clear();
+            tile->removeColor(); // remove background coloring
+            exClicked = tile; // last clicked tile is now this tile
+            movePossible.clear(); // clearing moves which were possible for last piece clicked
+            moved = true; // player has moved
             return;
         }
     }
-
+    moved = false; // player has not moved
     movePossible.clear(); // clearing moves which were possible for last piece clicked
 
     // defaut tasks handled above ----
 
-    // check for no piece on clicked tile
-    if(tile->getType() == Type::none) {
-        return;
-    }
-
-    // piece found, find possible moves and color them
-
     int x = tile->getLoc().first; // holds curr tile x
     int y = tile->getLoc().second; // holds curr tile y
+    // tmp x and y so we can manipulate
+    int tx = x; 
+    int ty = y;
     resetAfter.push_back(tile); // add this tile to the reset vector
     exClicked = tile; // set last clicked to current tile
+    Tile* checking = new Tile(); // tile pointer to tile we are checking
 
+    // check which piece (if one) player has clicked (white)
     if(tile->getTeam() == Team::white) {
-        Tile* checking = new Tile(); // tile pointer to tile we are checking
-        // white peice (bot going up)
+        // white piece
         switch(tile->getType()) {
+            case(Type::none):
+                return; // player clicked a blank space
             case(Type::pawn):
+                // player clicked pawn
                 if(y == 0) {
                     // hit bottom of board (promo)
+                    cout << " [ PROMOTION ]" << endl;
                     return;
                 }
                 checking = boardArr[x][y-1];
@@ -179,21 +185,114 @@ void MainWindow::handleTile(Tile *tile) {
                 }
                 break;
             case(Type::bishop):
-                Tile* checking = new Tile();
+                // player clicked bishop
+                tx = x;
+                ty = y;
                 // check left up diagonal
-                while(x >= 0 && y >= 0) {
+                while(tx > 0 && ty > 0) {
+                    tx--;
+                    ty--;
+                    checking = boardArr[tx][ty];
+                    // checking for teamate in way
+                    if(checking->getTeam() == tile->getTeam()) {
+                        break;
+                    }
 
+                    // at this point path is clear continue to check next
+                    checking->setBlue();
+                    resetAfter.push_back(checking);
+                    movePossible.push_back(checking);
+                    // checking for enemy in way
+                    if(checking->getType() != Type::none) {
+                        break;
+                    }
                 }
+                tx = x;
+                ty = y;
+                // check right up diagonal
+                while(tx > 0 && ty < 7) {
+                    tx--;
+                    ty++;
+                    checking = boardArr[tx][ty];
+                    // checking for teamate in way
+                    if(checking->getTeam() == tile->getTeam()) {
+                        break;
+                    }
+                    // at this point path is clear continue to check next
+                    checking->setBlue();
+                    resetAfter.push_back(checking);
+                    movePossible.push_back(checking);
+                    // checking for enemy in way
+                    if(checking->getType() != Type::none) {
+                        break;
+                    }
+                }
+                tx = x;
+                ty = y;
+                // check right down diagonal
+                while(tx < 7 && ty < 7) {
+                    tx++;
+                    ty++;
+                    checking = boardArr[tx][ty];
+                    // checking for teamate in way
+                    if(checking->getTeam() == tile->getTeam()) {
+                        break;
+                    }
+                    // at this point path is clear continue to check next
+                    checking->setBlue();
+                    resetAfter.push_back(checking);
+                    movePossible.push_back(checking);
+                    // checking for enemy in way
+                    if(checking->getType() != Type::none) {
+                        break;
+                    }
+                }
+                tx = x;
+                ty = y;
+                // check left down diagonal
+                while(tx < 7 && ty > 0) {
+                    tx++;
+                    ty--;
+                    checking = boardArr[tx][ty];
+                    // checking for teamate in way
+                    if(checking->getTeam() == tile->getTeam()) {
+                        break;
+                    }
+                    // at this point path is clear continue to check next
+                    checking->setBlue();
+                    resetAfter.push_back(checking);
+                    movePossible.push_back(checking);
+                    // checking for enemy in way
+                    if(checking->getType() != Type::none) {
+                        break;
+                    }
+                }
+                break;
+            case(Type::knight):
+                // player clicked knight
+                cout << "white knight" << endl;
+                break;
+            case(Type::rook):
+                cout << "white rook" << endl;
+                break;
+            case(Type::queen):
+                cout << "white queen" << endl;
+                break;
+            case(Type::king):
+                cout << "white king" << endl;;
                 break;
         }
         return;
     }
 
+    // check which piece (if one) player has clicked (black)
     if(tile->getTeam() == Team::black) {
-        Tile* checking = new Tile(); // tile pointer to tile we are checking
         // white peice (bot going up)
         switch(tile->getType()) {
+            case(Type::none):
+                return;
             case(Type::pawn):
+                cout << "black pawn" << endl;
                 if(y == 7) {
                     // hit bottom of board (promo)
                     return;
@@ -231,30 +330,103 @@ void MainWindow::handleTile(Tile *tile) {
                 }
                 break;
             case(Type::bishop):
+                tx = x;
+                ty = y;
+                // check left up diagonal
+                while(tx > 0 && ty > 0) {
+                    tx--;
+                    ty--;
+                    checking = boardArr[tx][ty];
+                    // checking for teamate in way
+                    if(checking->getTeam() == tile->getTeam()) {
+                        break;
+                    }
+
+                    // at this point path is clear continue to check next
+                    checking->setBlue();
+                    resetAfter.push_back(checking);
+                    movePossible.push_back(checking);
+                    // checking for enemy in way
+                    if(checking->getType() != Type::none) {
+                        break;
+                    }
+                }
+                tx = x;
+                ty = y;
+                // check right up diagonal
+                while(tx > 0 && ty < 7) {
+                    tx--;
+                    ty++;
+                    checking = boardArr[tx][ty];
+                    // checking for teamate in way
+                    if(checking->getTeam() == tile->getTeam()) {
+                        break;
+                    }
+                    // at this point path is clear continue to check next
+                    checking->setBlue();
+                    resetAfter.push_back(checking);
+                    movePossible.push_back(checking);
+                    // checking for enemy in way
+                    if(checking->getType() != Type::none) {
+                        break;
+                    }
+                }
+                tx = x;
+                ty = y;
+                // check right down diagonal
+                while(tx < 7 && ty < 7) {
+                    tx++;
+                    ty++;
+                    checking = boardArr[tx][ty];
+                    // checking for teamate in way
+                    if(checking->getTeam() == tile->getTeam()) {
+                        break;
+                    }
+                    // at this point path is clear continue to check next
+                    checking->setBlue();
+                    resetAfter.push_back(checking);
+                    movePossible.push_back(checking);
+                    // checking for enemy in way
+                    if(checking->getType() != Type::none) {
+                        break;
+                    }
+                }
+                tx = x;
+                ty = y;
+                // check left down diagonal
+                while(tx < 7 && ty > 0) {
+                    tx++;
+                    ty--;
+                    checking = boardArr[tx][ty];
+                    // checking for teamate in way
+                    if(checking->getTeam() == tile->getTeam()) {
+                        break;
+                    }
+                    // at this point path is clear continue to check next
+                    checking->setBlue();
+                    resetAfter.push_back(checking);
+                    movePossible.push_back(checking);
+                    // checking for enemy in way
+                    if(checking->getType() != Type::none) {
+                        break;
+                    }
+                }
                 break;
+            case(Type::knight):
+                cout << "black knight" << endl;
+                break;
+            case(Type::rook):
+                cout << "black rook" << endl;
+                break;
+            case(Type::queen):
+                cout << "black queen" << endl;
+                break;
+            case(Type::king):
+                cout << "black king" << endl;
+                break;
+            
         }
         return;
-    }
-
-    // black peice (top going down)
-    switch(tile->getType()) {
-        case(Type::pawn):
-            if(y == 7) {
-                // hit top of board (promo)
-                return;
-            }
-            if(boardArr[x][y+1]->getType() == Type::none) {
-                // can move forward
-                boardArr[x][y+1]->setBlue();
-                resetAfter.push_back(boardArr[x][y+1]);
-                movePossible.push_back(boardArr[x][y+1]);
-                if(y==1 && boardArr[x][y+2]->getType() == Type::none) {
-                    // on starting row (can move up 2) and no one in front
-                    boardArr[x][y+2]->setBlue();
-                    resetAfter.push_back(boardArr[x][y+2]);
-                    movePossible.push_back(boardArr[x][y+2]);
-                }
-            }
     }
 }
 
