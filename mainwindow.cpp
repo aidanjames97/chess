@@ -273,7 +273,74 @@ void MainWindow::handleTile(Tile *tile) {
                 cout << "white knight" << endl;
                 break;
             case(Type::rook):
-                cout << "white rook" << endl;
+                tx = x;
+                ty = y;
+                // check up
+                while(ty > 0){
+                    ty--;
+                    checking = boardArr[tx][ty];
+                    if(checking->getTeam() == tile->getTeam()) {
+                        break;
+                    }
+                    checking->setBlue();
+                    resetAfter.push_back(checking);
+                    movePossible.push_back(checking);
+                    // checking for enemy in the way
+                    if(checking->getType() != Type::none) {
+                        break; // enemy here break looping
+                    }
+                }
+                tx = x;
+                ty = y;
+                // check down
+                while(ty < 7){
+                    ty++;
+                    checking = boardArr[tx][ty];
+                    if(checking->getTeam() == tile->getTeam()) {
+                        break;
+                    }
+                    checking->setBlue();
+                    resetAfter.push_back(checking);
+                    movePossible.push_back(checking);
+                    // checking for enemy in the way
+                    if(checking->getType() != Type::none) {
+                        break; // enemy here break looping
+                    }
+                }
+                tx = x;
+                ty = y;
+                // check left
+                while(tx > 0){
+                    tx--;
+                    checking = boardArr[tx][ty];
+                    if(checking->getTeam() == tile->getTeam()) {
+                        break;
+                    }
+                    checking->setBlue();
+                    resetAfter.push_back(checking);
+                    movePossible.push_back(checking);
+                    // checking for enemy in the way
+                    if(checking->getType() != Type::none) {
+                        break; // enemy here break looping
+                    }
+                }
+                tx = x;
+                ty = y;
+                // check right
+                while(tx < 7){
+                    tx++;
+                    checking = boardArr[tx][ty];
+                    if(checking->getTeam() == tile->getTeam()) {
+                        break;
+                    }
+                    checking->setBlue();
+                    resetAfter.push_back(checking);
+                    movePossible.push_back(checking);
+                    // checking for enemy in the way
+                    if(checking->getType() != Type::none) {
+                        break; // enemy here break looping
+                    }
+                }
                 break;
             case(Type::queen):
                 cout << "white queen" << endl;
@@ -416,7 +483,74 @@ void MainWindow::handleTile(Tile *tile) {
                 cout << "black knight" << endl;
                 break;
             case(Type::rook):
-                cout << "black rook" << endl;
+                tx = x;
+                ty = y;
+                // check up
+                while(ty > 0){
+                    ty--;
+                    checking = boardArr[tx][ty];
+                    if(checking->getTeam() == tile->getTeam()) {
+                        break;
+                    }
+                    checking->setBlue();
+                    resetAfter.push_back(checking);
+                    movePossible.push_back(checking);
+                    // checking for enemy in the way
+                    if(checking->getType() != Type::none) {
+                        break; // enemy here break looping
+                    }
+                }
+                tx = x;
+                ty = y;
+                // check down
+                while(ty < 7){
+                    ty++;
+                    checking = boardArr[tx][ty];
+                    if(checking->getTeam() == tile->getTeam()) {
+                        break;
+                    }
+                    checking->setBlue();
+                    resetAfter.push_back(checking);
+                    movePossible.push_back(checking);
+                    // checking for enemy in the way
+                    if(checking->getType() != Type::none) {
+                        break; // enemy here break looping
+                    }
+                }
+                tx = x;
+                ty = y;
+                // check left
+                while(tx > 0){
+                    tx--;
+                    checking = boardArr[tx][ty];
+                    if(checking->getTeam() == tile->getTeam()) {
+                        break;
+                    }
+                    checking->setBlue();
+                    resetAfter.push_back(checking);
+                    movePossible.push_back(checking);
+                    // checking for enemy in the way
+                    if(checking->getType() != Type::none) {
+                        break; // enemy here break looping
+                    }
+                }
+                tx = x;
+                ty = y;
+                // check right
+                while(tx < 7){
+                    tx++;
+                    checking = boardArr[tx][ty];
+                    if(checking->getTeam() == tile->getTeam()) {
+                        break;
+                    }
+                    checking->setBlue();
+                    resetAfter.push_back(checking);
+                    movePossible.push_back(checking);
+                    // checking for enemy in the way
+                    if(checking->getType() != Type::none) {
+                        break; // enemy here break looping
+                    }
+                }
                 break;
             case(Type::queen):
                 cout << "black queen" << endl;
