@@ -140,11 +140,12 @@ void MainWindow::handleTile(Tile *tile) {
     Tile* checking = new Tile(); // tile pointer to tile we are checking
 
     // check which piece (if one) player has clicked (white)
-    if(tile->getTeam() == Team::white) {
+    if(whoTurn) {
+        if(tile->getTeam() == Team::white) {
         // white piece
         switch(tile->getType()) {
             case(Type::none):
-                return; // player clicked a blank space
+                break; // player clicked a blank space
             case(Type::pawn):
                 checkWhitePawn(x, y, checking, tile);
                 break;
@@ -177,15 +178,18 @@ void MainWindow::handleTile(Tile *tile) {
             case(Type::king):
                 break;
         }
+        whoTurn = false;
         return;
     }
-
+    }
+    
     // check which piece (if one) player has clicked (black)
-    if(tile->getTeam() == Team::black) {
+    if(!whoTurn) {
+        if(tile->getTeam() == Team::black) {
         // white peice (bot going up)
         switch(tile->getType()) {
             case(Type::none):
-                return;
+                break;
             case(Type::pawn):
                 checkBlackPawn(x, y, checking, tile);
                 break;
@@ -219,7 +223,9 @@ void MainWindow::handleTile(Tile *tile) {
                 break;
             
         }
+        whoTurn = true;
         return;
+    }
     }
 };
 

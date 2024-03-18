@@ -33,6 +33,7 @@ private:
     void checkWhitePawn(int x, int y, Tile* checking, Tile *tile); // checks for possible white pawn moves
     void checkKing(int x, int y, Tile* checking, Tile *tile); // checks for possible king moves
     void checkKnight(int x, int y, Tile* checking, Tile *tile); // checks for possible knight moves
+    bool whoTurn = true; // true is white, false is black
 private slots:
     void handleTile(Tile *tile);
 };
