@@ -34,6 +34,8 @@ private:
     void checkKing(int x, int y, Tile* checking, Tile *tile); // checks for possible king moves
     void checkKnight(int x, int y, Tile* checking, Tile *tile); // checks for possible knight moves
     bool whoTurn = true; // true is white, false is black
+    vector<Type> whiteTaken;
+    vector<Type> blackTaken;
 private slots:
     void handleTile(Tile *tile);
 };
