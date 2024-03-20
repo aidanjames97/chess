@@ -7,7 +7,9 @@
 
 // constructor
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
+    cout << "start of main window" << endl;
     board = new QGridLayout(this);
+    cout << "here" << endl;
     board->setGeometry(QRect(QPoint(0,0), QSize(WH*TILE_SIZE, WH*TILE_SIZE)));
     exClicked = nullptr;
 
@@ -76,34 +78,15 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
             connect(tile, &Tile::leftClick, this, [this, tile]() { handleTile(tile);});
         }
     }
+
+    cout << "main window constructor finsihsed" << endl;
 }
 
 // handles mouse click on tiles
 void MainWindow::handleTile(Tile *tile) {
-    if(tile->getTeam() == Team::none) {
-        cout << "has no team";
-    } else if (tile->getTeam() == Team::white) {
-        cout << "is white";
-    } else {
-        cout << "is black";
-    }
-
-    if(whoTurn) {
-        cout << ", whites turn" << endl;
-    } else {
-        cout << ", blacks turn" << endl;
-    }
-
-    // check if it is that players turn
-    if((tile->getTeam() == Team::none) || ((whoTurn && tile->getTeam() == Team::black) || (!whoTurn && tile->getTeam() == Team::white))) {
-        cout << "-- returning --" << endl;
-        return;
-    }
-
     // searing in moves in
     for(auto t : movePossible) {
         if(tile == t) {
-            cout << "move was valid, switching turns ..." << endl;
             // move piece to this location
             Type tmp = exClicked->getType();
 
@@ -146,16 +129,6 @@ void MainWindow::handleTile(Tile *tile) {
         }
     }
     movePossible.clear(); // clearing moves which were possible for last piece clicked
-    cout << "moves possible cleared" << endl;
-
-    // handles when user clicks same piece when it is already selected
-    if(tile == exClicked && !moved) { 
-        return;
-    }
-
-    moved = false; // player didnt move on click
-
-    tile->setYellow(); // set background yellow (indicate click)
 
     // remove any coloring on previous tiles
     for(auto t : resetAfter) {
@@ -163,9 +136,20 @@ void MainWindow::handleTile(Tile *tile) {
     }
     resetAfter.clear(); // clear array
 
+    // check if it is that players turn
+    // handles when user clicks same piece when it is already selected
+    if((tile->getTeam() == Team::none) || ((whoTurn && tile->getTeam() == Team::black) || (!whoTurn && tile->getTeam() == Team::white))) {
+        return;
+    }
+
+    moved = false; // player didnt move on click
+
+    tile->setYellow(); // set background yellow (indicate click)
+    resetAfter.push_back(tile); // add this tile to the reset vector
+
     int x = tile->getLoc().first; // holds curr tile x
     int y = tile->getLoc().second; // holds curr tile y
-    resetAfter.push_back(tile); // add this tile to the reset vector
+
     exClicked = tile; // set last clicked to current tile
     Tile* checking = new Tile(); // tile pointer to tile we are checking
 
