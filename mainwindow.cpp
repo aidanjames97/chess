@@ -80,23 +80,42 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
 
 // handles mouse click on tiles
 void MainWindow::handleTile(Tile *tile) {
-    // handles when user clicks same piece when it is already selected
-    if(tile == exClicked && !moved) { 
+    if(tile->getTeam() == Team::none) {
+        cout << "has no team";
+    } else if (tile->getTeam() == Team::white) {
+        cout << "is white";
+    } else {
+        cout << "is black";
+    }
+
+    if(whoTurn) {
+        cout << ", whites turn" << endl;
+    } else {
+        cout << ", blacks turn" << endl;
+    }
+
+    // check if it is that players turn
+    if((tile->getTeam() == Team::none) || ((whoTurn && tile->getTeam() == Team::black) || (!whoTurn && tile->getTeam() == Team::white))) {
+        cout << "-- returning --" << endl;
         return;
     }
-    moved = false;
-    tile->setYellow(); // set background yellow (indicate click)
-    // remove any coloring on tiles
-    for(auto t : resetAfter) {
-        t->removeColor();
-    }
-    resetAfter.clear(); // clear array
 
     // searing in moves in
     for(auto t : movePossible) {
         if(tile == t) {
+            cout << "move was valid, switching turns ..." << endl;
             // move piece to this location
             Type tmp = exClicked->getType();
+
+            // check if we are eliminating opponent piece
+            if(tile->getTeam() != exClicked->getTeam()) {
+                if(tile->getTeam() == Team::white) {
+                    whiteTaken.push_back(tile->getType());
+                } else {
+                    blackTaken.push_back(tile->getType());
+                }
+            }
+
             tile->setTeam(exClicked->getTeam());
             exClicked->removePiece();
             switch (tmp) {
@@ -127,8 +146,22 @@ void MainWindow::handleTile(Tile *tile) {
         }
     }
     movePossible.clear(); // clearing moves which were possible for last piece clicked
+    cout << "moves possible cleared" << endl;
 
-    // defaut tasks handled above ----
+    // handles when user clicks same piece when it is already selected
+    if(tile == exClicked && !moved) { 
+        return;
+    }
+
+    moved = false; // player didnt move on click
+
+    tile->setYellow(); // set background yellow (indicate click)
+
+    // remove any coloring on previous tiles
+    for(auto t : resetAfter) {
+        t->removeColor();
+    }
+    resetAfter.clear(); // clear array
 
     int x = tile->getLoc().first; // holds curr tile x
     int y = tile->getLoc().second; // holds curr tile y
@@ -137,88 +170,133 @@ void MainWindow::handleTile(Tile *tile) {
     Tile* checking = new Tile(); // tile pointer to tile we are checking
 
     // check which piece (if one) player has clicked (white)
-    if(whoTurn) {
-        if(tile->getTeam() == Team::white) {
-            // white piece
-            switch(tile->getType()) {
-                case(Type::none):
-                    break; // player clicked a blank space
-                case(Type::pawn):
-                    checkWhitePawn(x, y, checking, tile);
-                    break;
-                case(Type::bishop):
-                    checkLU(x, y, checking, tile);
-                    checkRU(x, y, checking, tile);
-                    checkRD(x, y, checking, tile);
-                    checkLD(x, y, checking, tile);
-                    break;
-                case(Type::knight):
-                    // player clicked knight
-                    checkKnight(x, y, checking, tile);
-                    break;
-                case(Type::rook):
-                    checkUp(x, y, checking, tile);
-                    checkDown(x, y, checking, tile);
-                    checkLeft(x, y, checking, tile);
-                    checkRight(x, y, checking, tile);
-                    break;
-                case(Type::queen):
-                    checkLU(x, y, checking, tile);
-                    checkRU(x, y, checking, tile);
-                    checkRD(x, y, checking, tile);
-                    checkLD(x, y, checking, tile);
-                    checkUp(x, y, checking, tile);
-                    checkDown(x, y, checking, tile);
-                    checkLeft(x, y, checking, tile);
-                    checkRight(x, y, checking, tile);
-                    break;
-                case(Type::king):
-                    break;
-            }
+    if(tile->getTeam() == Team::white) {
+        // white piece
+        switch(tile->getType()) {
+            case(Type::none):
+                return;
+            case(Type::pawn):
+                checkWhitePawn(x, y, checking, tile);
+                break;
+            case(Type::bishop):
+                checkLU(x, y, checking, tile);
+                checkRU(x, y, checking, tile);
+                checkRD(x, y, checking, tile);
+                checkLD(x, y, checking, tile);
+                break;
+            case(Type::knight):
+                // player clicked knight
+                checkKnight(x, y, checking, tile);
+                break;
+            case(Type::rook):
+                checkUp(x, y, checking, tile);
+                checkDown(x, y, checking, tile);
+                checkLeft(x, y, checking, tile);
+                checkRight(x, y, checking, tile);
+                break;
+            case(Type::queen):
+                checkLU(x, y, checking, tile);
+                checkRU(x, y, checking, tile);
+                checkRD(x, y, checking, tile);
+                checkLD(x, y, checking, tile);
+                checkUp(x, y, checking, tile);
+                checkDown(x, y, checking, tile);
+                checkLeft(x, y, checking, tile);
+                checkRight(x, y, checking, tile);
+                break;
+            case(Type::king):
+                break;
         }
     }
     
     // check which piece (if one) player has clicked (black)
-    if(!whoTurn) {
-        if(tile->getTeam() == Team::black) {
-            // white peice (bot going up)
-            switch(tile->getType()) {
-                case(Type::none):
-                    break;
-                case(Type::pawn):
-                    checkBlackPawn(x, y, checking, tile);
-                    break;
-                case(Type::bishop):
-                    checkLU(x, y, checking, tile);
-                    checkRU(x, y, checking, tile);
-                    checkRD(x, y, checking, tile);
-                    checkLD(x, y, checking, tile);
-                    break;
-                case(Type::knight):
-                    checkKnight(x, y, checking, tile);
-                    break;
-                case(Type::rook):
-                    checkUp(x, y, checking, tile);
-                    checkDown(x, y, checking, tile);
-                    checkLeft(x, y, checking, tile);
-                    checkRight(x, y, checking, tile);
-                    break;
-                case(Type::queen):
-                    checkLU(x, y, checking, tile);
-                    checkRU(x, y, checking, tile);
-                    checkRD(x, y, checking, tile);
-                    checkLD(x, y, checking, tile);
-                    checkUp(x, y, checking, tile);
-                    checkDown(x, y, checking, tile);
-                    checkLeft(x, y, checking, tile);
-                    checkRight(x, y, checking, tile);
-                    break;
-                case(Type::king):
-                    break;
-                
-            }
+    if(tile->getTeam() == Team::black) {
+        // white peice (bot going up)
+        switch(tile->getType()) {
+            case(Type::none):
+                return;
+            case(Type::pawn):
+                checkBlackPawn(x, y, checking, tile);
+                break;
+            case(Type::bishop):
+                checkLU(x, y, checking, tile);
+                checkRU(x, y, checking, tile);
+                checkRD(x, y, checking, tile);
+                checkLD(x, y, checking, tile);
+                break;
+            case(Type::knight):
+                checkKnight(x, y, checking, tile);
+                break;
+            case(Type::rook):
+                checkUp(x, y, checking, tile);
+                checkDown(x, y, checking, tile);
+                checkLeft(x, y, checking, tile);
+                checkRight(x, y, checking, tile);
+                break;
+            case(Type::queen):
+                checkLU(x, y, checking, tile);
+                checkRU(x, y, checking, tile);
+                checkRD(x, y, checking, tile);
+                checkLD(x, y, checking, tile);
+                checkUp(x, y, checking, tile);
+                checkDown(x, y, checking, tile);
+                checkLeft(x, y, checking, tile);
+                checkRight(x, y, checking, tile);
+                break;
+            case(Type::king):
+                break;
+            
         }
     }
+
+    // cout << "whiteTaken: ";
+    // for(auto y : whiteTaken) {
+    //     switch (y) {
+    //     case (Type::pawn):
+    //         cout << "WP ";
+    //         break;
+    //     case (Type::bishop):
+    //         cout << "WB ";
+    //         break;
+    //     case (Type::knight):
+    //         cout << "WN ";
+    //         break;
+    //     case (Type::rook):
+    //         cout << "WR ";
+    //         break;
+    //     case (Type::queen):
+    //         cout << "WQ ";
+    //         break;
+    //     case (Type::king):
+    //         cout << "WK ";
+    //         break;
+    //     }
+    // }
+
+    // cout << "\nblackTaken: ";
+    // for(auto y : blackTaken) {
+    //     switch (y) {
+    //     case (Type::pawn):
+    //         cout << "BP ";
+    //         break;
+    //     case (Type::bishop):
+    //         cout << "BB ";
+    //         break;
+    //     case (Type::knight):
+    //         cout << "BN ";
+    //         break;
+    //     case (Type::rook):
+    //         cout << "BR ";
+    //         break;
+    //     case (Type::queen):
+    //         cout << "BQ ";
+    //         break;
+    //     case (Type::king):
+    //         cout << "BK ";
+    //         break;
+    //     }
+    // }
+    // cout << "\n------" << endl;
 };
 
 // ---- FOR CHECKING PIECE MOVEMENT ----
