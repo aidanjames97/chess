@@ -1,21 +1,19 @@
 #include <iostream>
 #include <QApplication>
-#include "mainwindow.h"
+#include "gridlayout.h"
 
 #define WH 8
 #define TILE_SIZE 100
 
 // constructor
-MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
-    cout << "start of main window" << endl;
-    board = new QGridLayout(this);
-    cout << "here" << endl;
-    board->setGeometry(QRect(QPoint(0,0), QSize(WH*TILE_SIZE, WH*TILE_SIZE)));
+GridLayout::GridLayout(QWidget *parent) : QGridLayout(parent) {
+    cout << "start of grid layout" << endl;
+    this->setGeometry(QRect(QPoint(0,0), QSize(WH*TILE_SIZE, WH*TILE_SIZE)));
     exClicked = nullptr;
 
     for(int i=0; i<8;i++) {
         for(int j=0; j<8;j++) {
-            Tile *tile = new Tile(this);
+            Tile *tile = new Tile(parent);
             tile->setGeometry(QRect(QPoint(i*TILE_SIZE, j*TILE_SIZE), QSize(TILE_SIZE, TILE_SIZE)));
             tile->setIconSize(QSize(TILE_SIZE - 10, TILE_SIZE - 10));
             tile->setLoc(make_pair(i,j));
@@ -74,7 +72,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
                 tile->setTeam(Team::none);
             }
 
-            board->addWidget(tile, i, j);
+            this->addWidget(tile, i, j);
             connect(tile, &Tile::leftClick, this, [this, tile]() { handleTile(tile);});
         }
     }
@@ -83,7 +81,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
 }
 
 // handles mouse click on tiles
-void MainWindow::handleTile(Tile *tile) {
+void GridLayout::handleTile(Tile *tile) {
     // searing in moves in
     for(auto t : movePossible) {
         if(tile == t) {
@@ -285,7 +283,7 @@ void MainWindow::handleTile(Tile *tile) {
 
 // ---- FOR CHECKING PIECE MOVEMENT ----
 // checking up
-void MainWindow::checkUp(int x, int y, Tile* checking, Tile *tile) {
+void GridLayout::checkUp(int x, int y, Tile* checking, Tile *tile) {
     int tx = x;
     int ty = y;
     // check up
@@ -306,7 +304,7 @@ void MainWindow::checkUp(int x, int y, Tile* checking, Tile *tile) {
 }
 
 // checking down
-void MainWindow::checkDown(int x, int y, Tile* checking, Tile *tile) {
+void GridLayout::checkDown(int x, int y, Tile* checking, Tile *tile) {
     int tx = x;
     int ty = y;
     // check up
@@ -327,7 +325,7 @@ void MainWindow::checkDown(int x, int y, Tile* checking, Tile *tile) {
 }
 
 // checking left
-void MainWindow::checkLeft(int x, int y, Tile* checking, Tile *tile) {
+void GridLayout::checkLeft(int x, int y, Tile* checking, Tile *tile) {
     int tx = x;
     int ty = y;
     // check up
@@ -348,7 +346,7 @@ void MainWindow::checkLeft(int x, int y, Tile* checking, Tile *tile) {
 }
 
 // checking right
-void MainWindow::checkRight(int x, int y, Tile* checking, Tile *tile) {
+void GridLayout::checkRight(int x, int y, Tile* checking, Tile *tile) {
     int tx = x;
     int ty = y;
     // check up
@@ -369,7 +367,7 @@ void MainWindow::checkRight(int x, int y, Tile* checking, Tile *tile) {
 }
 
 // checking left down
-void MainWindow::checkLD(int x, int y, Tile* checking, Tile *tile) {
+void GridLayout::checkLD(int x, int y, Tile* checking, Tile *tile) {
     int tx = x;
     int ty = y;
     while(tx < 7 && ty > 0) {
@@ -392,7 +390,7 @@ void MainWindow::checkLD(int x, int y, Tile* checking, Tile *tile) {
 }
 
 // checking left up
-void MainWindow::checkLU(int x, int y, Tile* checking, Tile *tile) {
+void GridLayout::checkLU(int x, int y, Tile* checking, Tile *tile) {
     int tx = x;
     int ty = y;
     // check left up diagonal
@@ -417,7 +415,7 @@ void MainWindow::checkLU(int x, int y, Tile* checking, Tile *tile) {
 }
 
 // checking right down
-void MainWindow::checkRD(int x, int y, Tile* checking, Tile *tile) {
+void GridLayout::checkRD(int x, int y, Tile* checking, Tile *tile) {
     int tx = x;
     int ty = y;
     // check right down diagonal
@@ -441,7 +439,7 @@ void MainWindow::checkRD(int x, int y, Tile* checking, Tile *tile) {
 }
 
 // checking right up
-void MainWindow::checkRU(int x, int y, Tile* checking, Tile *tile) {
+void GridLayout::checkRU(int x, int y, Tile* checking, Tile *tile) {
     int tx = x;
     int ty = y;
     // check right up diagonal
@@ -465,7 +463,7 @@ void MainWindow::checkRU(int x, int y, Tile* checking, Tile *tile) {
 }
 
 // checking black pawn
-void MainWindow::checkBlackPawn(int x, int y, Tile* checking, Tile *tile) {
+void GridLayout::checkBlackPawn(int x, int y, Tile* checking, Tile *tile) {
     if(y == 7) {
         // hit bottom of board (promo)
         return;
@@ -504,7 +502,7 @@ void MainWindow::checkBlackPawn(int x, int y, Tile* checking, Tile *tile) {
 }
 
 // checking white pawn
-void MainWindow::checkWhitePawn(int x, int y, Tile* checking, Tile *tile) {
+void GridLayout::checkWhitePawn(int x, int y, Tile* checking, Tile *tile) {
     // player clicked pawn
     if(y == 0) {
         // hit bottom of board (promo)
@@ -550,7 +548,7 @@ void MainWindow::checkWhitePawn(int x, int y, Tile* checking, Tile *tile) {
 // }
 
 // checking knights
-void MainWindow::checkKnight(int x, int y, Tile* checking, Tile *tile) {
+void GridLayout::checkKnight(int x, int y, Tile* checking, Tile *tile) {
     int tx = x;
     int ty = y;
 
@@ -670,4 +668,4 @@ void MainWindow::checkKnight(int x, int y, Tile* checking, Tile *tile) {
 }
 
 // deconstructor
-MainWindow::~MainWindow() {}
+GridLayout::~GridLayout() {}

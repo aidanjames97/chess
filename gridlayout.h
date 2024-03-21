@@ -1,5 +1,5 @@
-#ifndef MAINWINDOW_H
-#define MAINWINDOW_H
+#ifndef GRIDLAYOUT_H
+#define GRIDLAYOUT_H
 
 #include <QMainWindow>
 #include <QPushButton>
@@ -8,12 +8,11 @@
 
 using namespace std;
 
-class MainWindow : public QMainWindow {
+class GridLayout : public QGridLayout {
     Q_OBJECT
 public:
-    MainWindow(QWidget *parent = nullptr);
-    ~MainWindow();
-    QGridLayout *board;
+    GridLayout(QWidget *parent = nullptr);
+    ~GridLayout();
     Tile *boardArr[8][8];
 private:
     vector<Tile*> movePossible; // holds moves the player is allowed to make
@@ -40,4 +39,4 @@ private slots:
     void handleTile(Tile *tile);
 };
 
-#endif // MAINWINDOW_H
+#endif // GRIDLAYOUT_H

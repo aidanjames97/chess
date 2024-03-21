@@ -9,6 +9,7 @@ Tile::Tile(QWidget *parent) : QPushButton(parent) {
     color = Color::grey;
     setStyleSheet("background-color: grey");
     type = Type::none;
+    setFixedSize(100, 100);
 }
 
 // setting team
