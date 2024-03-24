@@ -4,6 +4,8 @@
 #include <QMainWindow>
 #include <QPushButton>
 #include <QGridLayout>
+#include <iostream>
+#include <QApplication>
 #include "tile.h"
 
 using namespace std;

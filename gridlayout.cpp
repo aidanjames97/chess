@@ -1,5 +1,3 @@
-#include <iostream>
-#include <QApplication>
 #include "gridlayout.h"
 
 #define WH 8
@@ -7,7 +5,6 @@
 
 // constructor
 GridLayout::GridLayout(QWidget *parent) : QGridLayout(parent) {
-    cout << "start of grid layout" << endl;
     this->setGeometry(QRect(QPoint(0,0), QSize(WH*TILE_SIZE, WH*TILE_SIZE)));
     exClicked = nullptr;
 
@@ -76,8 +73,6 @@ GridLayout::GridLayout(QWidget *parent) : QGridLayout(parent) {
             connect(tile, &Tile::leftClick, this, [this, tile]() { handleTile(tile);});
         }
     }
-
-    cout << "main window constructor finsihsed" << endl;
 }
 
 // handles mouse click on tiles
