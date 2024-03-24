@@ -1,8 +1,4 @@
-#include "mainwindow.h"
 #include "tile.h"
-#include <iostream>
-
-using namespace std;
 
 // constructor
 Tile::Tile(QWidget *parent) : QPushButton(parent) {
