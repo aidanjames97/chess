@@ -37,6 +37,7 @@ private:
     bool whoTurn = true; // true is white, false is black
     vector<Type> whiteTaken;
     vector<Type> blackTaken;
+    void gameOver(); // game is over, 1 for white, 2 for black
 private slots:
     void handleTile(Tile *tile);
 };
