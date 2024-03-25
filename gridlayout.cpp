@@ -87,8 +87,16 @@ void GridLayout::handleTile(Tile *tile) {
             if(tile->getTeam() != exClicked->getTeam()) {
                 if(tile->getTeam() == Team::white) {
                     whiteTaken.push_back(tile->getType());
+                    // check if king was taken
+                    if(tile->getType() == Type::king) {
+                        gameOver();
+                    }
                 } else {
                     blackTaken.push_back(tile->getType());
+                    // check if king was taken
+                    if(tile->getType() == Type::king) {
+                        gameOver();
+                    }
                 }
             }
 
@@ -226,54 +234,7 @@ void GridLayout::handleTile(Tile *tile) {
         }
     }
 
-    // cout << "whiteTaken: ";
-    // for(auto y : whiteTaken) {
-    //     switch (y) {
-    //     case (Type::pawn):
-    //         cout << "WP ";
-    //         break;
-    //     case (Type::bishop):
-    //         cout << "WB ";
-    //         break;
-    //     case (Type::knight):
-    //         cout << "WN ";
-    //         break;
-    //     case (Type::rook):
-    //         cout << "WR ";
-    //         break;
-    //     case (Type::queen):
-    //         cout << "WQ ";
-    //         break;
-    //     case (Type::king):
-    //         cout << "WK ";
-    //         break;
-    //     }
-    // }
 
-    // cout << "\nblackTaken: ";
-    // for(auto y : blackTaken) {
-    //     switch (y) {
-    //     case (Type::pawn):
-    //         cout << "BP ";
-    //         break;
-    //     case (Type::bishop):
-    //         cout << "BB ";
-    //         break;
-    //     case (Type::knight):
-    //         cout << "BN ";
-    //         break;
-    //     case (Type::rook):
-    //         cout << "BR ";
-    //         break;
-    //     case (Type::queen):
-    //         cout << "BQ ";
-    //         break;
-    //     case (Type::king):
-    //         cout << "BK ";
-    //         break;
-    //     }
-    // }
-    // cout << "\n------" << endl;
 };
 
 // ---- FOR CHECKING PIECE MOVEMENT ----
@@ -537,11 +498,6 @@ void GridLayout::checkWhitePawn(int x, int y, Tile* checking, Tile *tile) {
     }
 }
 
-// checking king
-// void MainWindow::checkKing(int x, int y, Tile* checking, Tile *tile) {
-
-// }
-
 // checking knights
 void GridLayout::checkKnight(int x, int y, Tile* checking, Tile *tile) {
     int tx = x;
@@ -660,6 +616,12 @@ void GridLayout::checkKnight(int x, int y, Tile* checking, Tile *tile) {
             }
         }
     }
+}
+
+// game is over 1 is white 2 is black
+void GridLayout::gameOver() {
+    cout << "Game Over" << endl;
+    qApp->quit();
 }
 
 // deconstructor
